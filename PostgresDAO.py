@@ -78,7 +78,7 @@ class PostgreSQLdb:
         else:
             self.cursor.execute(query, parameters)
 
-    def _fetch_query_result(self) -> list[tuple[str]]:
+    def _fetch_query_result(self) -> list[tuple]:
         """Get the results from the most recent query.
 
         Returns:
@@ -89,7 +89,7 @@ class PostgreSQLdb:
         """Commits any changes made in queries."""
         self.connection.commit()
 
-    def query(self, query: str, parameters: tuple = None, expect_return: bool = False, commit_changes: bool = False) -> list[tuple[str]] or None:
+    def query(self, query: str, parameters: tuple = None, expect_return: bool = False, commit_changes: bool = False) -> list[tuple] or None:
         """Opens a connection to the DB, opens a cursor, executes a query, and closes everything again.
         Also retrieves query result or commits changes if relevant.
 
@@ -119,10 +119,19 @@ class PostgreSQLdb:
         self._close_connection()
         return output
 
+    def many_update_queries(self, query: str, data_list: list[tuple]): #DO NOT USE YET
+        """Execute a single query that updates the DB with many different values without constantly opening/closing cursors/connections.
 
-
-db = PostgreSQLdb("localhost",
-                  "rcmd",
-                  "postgres",
-                  "DataBAE117",
-                  "5432")
+        Args:
+            query:
+                The SQL query to execute with every dataset in data_list.
+                Must contain '%s' in place of parameters to let psycopg2 automatically format them.
+                The values to replace the %s's with must be passed with the parameters parameter.
+            data_list:
+                list containing a tuple for every query that has to be excecuted."""
+        self._connect()
+        self._summon_cursor()
+        self.cursor.executemany(query, data_list)
+        self._commit_changes()
+        self._close_cursor()
+        self._close_connection()
