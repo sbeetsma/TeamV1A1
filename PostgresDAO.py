@@ -135,3 +135,15 @@ class PostgreSQLdb:
         self._commit_changes()
         self._close_cursor()
         self._close_connection()
+
+    def regenerate_db(self, ddl_source: str):
+        """Empties all knows tables in the DB, and reconstructs everything according to the DDL(SQL) file provided.
+
+        Args:
+            ddl_source: the file path/name of the ddl script."""
+        with open(ddl_source, "r") as file:
+            file_object = file.read().replace('\n', '')
+        query_list = file_object.split(";")
+        for query in query_list:
+            if query != "":
+                self.query(query + ";", commit_changes=True)
