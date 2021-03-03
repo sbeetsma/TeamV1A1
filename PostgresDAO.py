@@ -115,7 +115,10 @@ class PostgreSQLdb:
             output = self._fetch_query_result()
         if commit_changes:
             self._commit_changes()
+        self._close_cursor()
+        self._close_connection()
         return output
+
 
 
 db = PostgreSQLdb("localhost",
