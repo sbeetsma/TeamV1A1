@@ -119,7 +119,7 @@ class PostgreSQLdb:
         self._close_connection()
         return output
 
-    def many_update_queries(self, query: str, data_list: list[tuple]): #DO NOT USE YET
+    def many_update_queries(self, query: str, data_list: list[tuple]):
         """Execute a single query that updates the DB with many different values without constantly opening/closing cursors/connections.
 
         Args:
