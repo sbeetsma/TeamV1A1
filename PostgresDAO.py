@@ -1,4 +1,5 @@
 import psycopg2
+import random
 
 
 #Heb voor het gemak voor nu een classje geschreven.
@@ -147,3 +148,29 @@ class PostgreSQLdb:
         for query in query_list:
             if query != "":
                 self.query(query + ";", commit_changes=True)
+
+
+def max_abs_price(db: PostgreSQLdb) -> tuple[str]:
+    """Retrieves all products in the database.
+    Selects a random product from that database.
+    Searches through all products for the product with biggest price difference compared to that one.
+
+    Args:
+        db: the database to retrieve products from.
+
+    Returns:
+        tuple containing:
+            0: product_id of the product with the biggest price difference.
+            1: product_id of the randomly selected product.
+    """
+    sql_query = "SELECT product_id, selling_price FROM Products;"
+    products = db.query(sql_query, expect_return=True)
+    random_product = random.choice(products)
+    biggest_dif_product, biggest_dif = None, -1
+    for product in products:
+        dif = abs(random_product[1] - product[1])
+        if dif > biggest_dif:
+            biggest_dif_product, biggest_dif = product, dif
+    return biggest_dif_product[0], random_product[0]
+
+
