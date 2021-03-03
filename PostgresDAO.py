@@ -6,11 +6,11 @@ import random
 #Maar wees niet bang om te verbeteren/vervangen in de toekomst.
 
 #Vul hier je eigen PostgreSQL credentials in:
-host = ""
-database = ""
-user = ""
-password = ""
-port = ""
+host = "localhost"
+database = "RCMD"
+user = "postgres"
+password = "password"
+port = "5432"
 #try not to push them to github
 
 
@@ -182,6 +182,39 @@ def add_items_to_database(db: PostgreSQLdb):
         db.query("INSERT INTO Products (product_id, product_name, selling_price) VALUES (%s, %s, %s);",
                  (product_id, product_name, product_price), commit_changes=True)
 
+# functie voor opdracht 2 voor summatieve opdracht 2c:
+def alle_product_ids():
+    """Functie die alle product ids returned in een lijst uit de relationele database"""
+    product_ids = []
+    products = db.query("SELECT * FROM products", expect_return=True)
+    for product in products:
+        product_ids.append(product[0])
+    return product_ids
+
+def product_id_lijst_input():
+    """Functie voor het verkrijgen van een product id lijst doormiddel van user input.
+    Een lijst van alle opgegeven product ids wordt returned"""
+    product_ids = []
+    while True:
+        productid = input('input een product id, input ok als je je klaar bent met ids invoeren')
+        # als input ok is stop dan met id's vragen
+        if productid == 'ok':
+            break
+        # append id aan product ids lijst
+        product_ids.append(productid)
+    return product_ids
+
+def gemiddelde_prijs(id_lijst):
+    """Functie die de gemiddelde prijs van een gegeven lijst product ids berekent en deze returned (in eurocent)
+    args:
+        id_lijst: lijst van product ids waarvan het gemiddelde berekent wordt"""
+    prijs_lijst = []
+    for id in id_lijst:
+        product = db.query(f"SELECT selling_price FROM products WHERE product_id = '{id}'", expect_return=True)
+        # index 0 is tuple met alle informatie, daarvan index 2 is de prijs
+        prijs_lijst.append(product[0][0])
+    gemiddeld = sum(prijs_lijst) / len(prijs_lijst)
+    return round(gemiddeld)
 
 
 #functie voor opdracht 3 summatieve opdracht 2c:
@@ -216,4 +249,3 @@ if host == "" or database == "" or user == "" or password == "" or port == "":
 db = PostgreSQLdb(host, database, user, password, port)
 
 #function calls for summatieve opdracht 2c:
-
