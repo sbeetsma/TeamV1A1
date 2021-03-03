@@ -6,13 +6,6 @@ import psycopg2
 
 
 
-class PostgreSQLdbError(Exception):
-    """Custom exception to help diagnose problems with the relational DB."""
-    def __init__(self, message: str = "There's a problem with the database"):
-        """Ïnitialize class instance."""
-        super().__init__(message)
-
-
 class PostgreSQLdb:
     """A PostgreSQL (relational) database.
 
@@ -21,7 +14,7 @@ class PostgreSQLdb:
         database: the name of the database (rcmd for all the group members).
         user: the user the database belongs to according to pgadmin (presumably postgres).
         password: the database password.
-        port: the port the database is hosted at.
+        port: the port the database is hosted at (presumably 5432 if DB is hosted on windows machine).
         connection: a psycopg2.extensions.cursor object that represents a connection to the database.
         cursor: a psycopg2.extensions.connection that represents a cursor in the database."""
     def __init__(self, host: str, database: str, user: str, password: str, port: str):
@@ -75,18 +68,24 @@ class PostgreSQLdb:
         Able to sanatize inputs with the parameters parameter.
 
         Args:
-            """
+            query:
+                The SQL query to execute.
+                May contain '%s' in place of parameters to let psycopg2 automatically format them.
+                The values to replace the %s's with can be passed with the parameters parameter.
+            parameters: tuple containing parameters to replace the %s's in the query with."""
         if parameters == None:
             self.cursor.execute(query)
         else:
             self.cursor.execute(query, parameters)
 
-    def fetch_query_result(self) -> list:
+    def fetch_query_result(self) -> list[tuple[str]]:
+        """Get the results from the most recent query.
+
+        Returns:
+            list containing a tuple for every row in the query result."""
         return self.cursor.fetchall()
 
     def commit_changes(self):
+        """Commits any changes made in querys."""
         self.connection.commit()
 
-
-
-#TODO: Finish docstrings
