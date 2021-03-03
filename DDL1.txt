@@ -1,8 +1,7 @@
-DROP TABLE IF EXISTS Sessions;
-DROP TABLE IF EXISTS Categories;
-DROP TABLE IF EXISTS Products;
 DROP TABLE IF EXISTS Ordered_products;
-
+DROP TABLE IF EXISTS Sessions;
+DROP TABLE IF EXISTS Products;
+DROP TABLE IF EXISTS Categories;
 
 
 CREATE TABLE Sessions
@@ -39,6 +38,6 @@ CREATE TABLE Ordered_products
 	product_id VARCHAR(128) NOT NULL,
 	quantity INT NOT NULL,
 	PRIMARY KEY(session_id, product_id),
-	FOREIGN KEY(session_id) REFERENCES Session(session_id),
-	FOREIGN KEY(product_id) REFERENCES Product(product_id)
+	FOREIGN KEY(session_id) REFERENCES Sessions(session_id),
+	FOREIGN KEY(product_id) REFERENCES Products(product_id)
 );
