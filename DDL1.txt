@@ -30,8 +30,8 @@ CREATE TABLE Products
 	PRIMARY KEY(product_id),
 	FOREIGN KEY(category) REFERENCES Category(category_id),
 	FOREIGN KEY(sub_category) REFERENCES Category(category_id),
-	FOREIGN KEY(sub_sub_lowest_category) REFERENCES Category(category_id),
-	FOREIGN KEY(sub_sub_sub_lowest_category) REFERENCES Category(category_id)
+	FOREIGN KEY(sub_sub_category) REFERENCES Category(category_id),
+	FOREIGN KEY(sub_sub_sub_category) REFERENCES Category(category_id)
 );
 CREATE TABLE Ordered_products
 (
