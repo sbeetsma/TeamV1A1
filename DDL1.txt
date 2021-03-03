@@ -22,6 +22,7 @@ CREATE TABLE Products
 (
 	product_id VARCHAR(128) NOT NULL,
 	product_name VARCHAR(255) NOT NULL,
+	price INT,
 	category INT,
 	sub_category INT,
 	sub_sub_category INT,
