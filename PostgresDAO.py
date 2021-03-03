@@ -14,11 +14,6 @@ port = "5432"
 #try not to push them to github
 
 
-class CredentialError(Exception):
-    """Custom exception to help remind people to fill in their credentials."""
-    def __init__(self, message: str = "You forgot to fill in your PostGreSQL credentials."):
-        super().__init__(message)
-
 
 class PostgreSQLdb:
     """A PostgreSQL (relational) database.
@@ -242,9 +237,6 @@ def max_abs_price(db: PostgreSQLdb) -> tuple[str]:
     return biggest_dif_product[0], random_product[0]
 
 
-#setup
-if host == "" or database == "" or user == "" or password == "" or port == "":
-    raise CredentialError
 
 db = PostgreSQLdb(host, database, user, password, port)
 
