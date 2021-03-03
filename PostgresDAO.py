@@ -35,7 +35,7 @@ class PostgreSQLdb:
         self.connection = None
         self.cursor = None
 
-    def connect(self):
+    def _connect(self):
         """Connects to the database.
         Assings a connection object to self.connection."""
         self.connection = psycopg2.connect(
@@ -46,24 +46,24 @@ class PostgreSQLdb:
             port = self.port
         )
 
-    def summon_cursor(self):
+    def _summon_cursor(self):
         """Creates a cursor within the database.
         Assigns a cursor object to self.cursor."""
         self.cursor = self.connection.cursor()
 
-    def close_connection(self):
+    def _close_connection(self):
         """Closes the connection with the database.
         Sets self.connection to none."""
         self.connection.close()
         self.connection = None
 
-    def close_cursor(self):
+    def _close_cursor(self):
         """Closes the cursor within the database.
         Sets self.cursor to none."""
         self.cursor.close()
         self.cursor = None
 
-    def query(self, query: str, parameters: tuple = None):
+    def _bare_query(self, query: str, parameters: tuple = None):
         """Executes an SQL query in the database.
         Able to sanatize inputs with the parameters parameter.
 
@@ -78,14 +78,48 @@ class PostgreSQLdb:
         else:
             self.cursor.execute(query, parameters)
 
-    def fetch_query_result(self) -> list[tuple[str]]:
+    def _fetch_query_result(self) -> list[tuple[str]]:
         """Get the results from the most recent query.
 
         Returns:
             list containing a tuple for every row in the query result."""
         return self.cursor.fetchall()
 
-    def commit_changes(self):
-        """Commits any changes made in querys."""
+    def _commit_changes(self):
+        """Commits any changes made in queries."""
         self.connection.commit()
 
+    def query(self, query: str, parameters: tuple = None, expect_return: bool = False, commit_changes: bool = False) -> list[tuple[str]] or None:
+        """Opens a connection to the DB, opens a cursor, executes a query, and closes everything again.
+        Also retrieves query result or commits changes if relevant.
+
+        Args:
+            query:
+                The SQL query to execute.
+                May contain '%s' in place of parameters to let psycopg2 automatically format them.
+                The values to replace the %s's with can be passed with the parameters parameter.
+            parameters: tuple containing parameters to replace the %s's in the query with.
+            expect_return: bool for wether the query should expect a return.
+            commit_changes: bool for wether changes were made to the DB that need to be committed.
+
+        Returns:
+            if expect_return:
+                list containing a tuple for every row in the query result.
+            else:
+                None"""
+        self._connect()
+        self._summon_cursor()
+        self._bare_query(query, parameters)
+        output = None
+        if expect_return:
+            output = self._fetch_query_result()
+        if commit_changes:
+            self._commit_changes()
+        return output
+
+
+db = PostgreSQLdb("localhost",
+                  "rcmd",
+                  "postgres",
+                  "DataBAE117",
+                  "5432")
