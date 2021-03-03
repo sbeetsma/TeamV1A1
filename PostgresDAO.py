@@ -1,15 +1,15 @@
 import psycopg2
 import random
+import pymongo
 
 
-#Heb voor het gemak voor nu een classje geschreven.
-#Maar wees niet bang om te verbeteren/vervangen in de toekomst.
+
 
 #Vul hier je eigen PostgreSQL credentials in:
 host = "localhost"
-database = "RCMD"
+database = ""
 user = "postgres"
-password = "password"
+password = ""
 port = "5432"
 #try not to push them to github
 
@@ -178,8 +178,11 @@ def add_items_to_database(db: PostgreSQLdb):
                  (product_id, product_name, product_price), commit_changes=True)
 
 # functie voor opdracht 2 voor summatieve opdracht 2c:
-def alle_product_ids():
-    """Functie die alle product ids returned in een lijst uit de relationele database"""
+def alle_product_ids(db: PostgreSQLdb):
+    """Functie die alle product ids returned in een lijst uit de relationele database
+
+    parameters:
+        db: de database om ids uit te halen."""
     product_ids = []
     products = db.query("SELECT * FROM products", expect_return=True)
     for product in products:
@@ -199,10 +202,11 @@ def product_id_lijst_input():
         product_ids.append(productid)
     return product_ids
 
-def gemiddelde_prijs(id_lijst):
+def gemiddelde_prijs(id_lijst, db: PostgreSQLdb):
     """Functie die de gemiddelde prijs van een gegeven lijst product ids berekent en deze returned (in eurocent)
     args:
-        id_lijst: lijst van product ids waarvan het gemiddelde berekent wordt"""
+        id_lijst: lijst van product ids waarvan het gemiddelde berekent wordt
+        db: de database om te doorzoeken"""
     prijs_lijst = []
     for id in id_lijst:
         product = db.query(f"SELECT selling_price FROM products WHERE product_id = '{id}'", expect_return=True)
@@ -237,7 +241,20 @@ def max_abs_price(db: PostgreSQLdb) -> tuple[str]:
     return biggest_dif_product[0], random_product[0]
 
 
-
 db = PostgreSQLdb(host, database, user, password, port)
 
 #function calls for summatieve opdracht 2c:
+print("1:", end="\n\n")
+print(f"Adding items to PostGreSQL...")
+add_items_to_database(db)
+print("Done!")
+
+print("2:", end="\n\n")
+print(f"De gemiddelde prijs van alle producten in PostGreSQL is {gemiddelde_prijs(alle_product_ids(db), db)}.")
+print("Vul ID's in van producten waarvan je de gemiddelde prijs wilt weten. Vul 'ok' in als je klaar bent.")
+print(gemiddelde_prijs(product_id_lijst_input(), db))
+
+print("3:", end="\n\n")
+map = max_abs_price(db)
+print(f"ID van gekozen willikeurig product: {map[1]}")
+print(f"ID van grootste absolute prijsverschil met dat product in PostGreSQL: {map[0]}")
