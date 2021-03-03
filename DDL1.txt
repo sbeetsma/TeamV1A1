@@ -28,10 +28,10 @@ CREATE TABLE Products
 	sub_sub_category INT,
 	sub_sub_sub_category INT,
 	PRIMARY KEY(product_id),
-	FOREIGN KEY(category) REFERENCES Category(category_id),
-	FOREIGN KEY(sub_category) REFERENCES Category(category_id),
-	FOREIGN KEY(sub_sub_category) REFERENCES Category(category_id),
-	FOREIGN KEY(sub_sub_sub_category) REFERENCES Category(category_id)
+	FOREIGN KEY(category) REFERENCES Categories(category_id),
+	FOREIGN KEY(sub_category) REFERENCES Categories(category_id),
+	FOREIGN KEY(sub_sub_category) REFERENCES Categories(category_id),
+	FOREIGN KEY(sub_sub_sub_category) REFERENCES Categories(category_id)
 );
 CREATE TABLE Ordered_products
 (
