@@ -5,6 +5,19 @@ import random
 #Heb voor het gemak voor nu een classje geschreven.
 #Maar wees niet bang om te verbeteren/vervangen in de toekomst.
 
+#Vul hier je eigen PostgreSQL credentials in:
+host = ""
+database = ""
+user = ""
+password = ""
+port = ""
+#try not to push them to github
+
+
+class CredentialError(Exception):
+    """Custom exception to help remind people to fill in their credentials."""
+    def __init__(self, message: str = "You forgot to fill in your PostGreSQL credentials."):
+        super().__init__(message)
 
 
 class PostgreSQLdb:
@@ -150,6 +163,28 @@ class PostgreSQLdb:
                 self.query(query + ";", commit_changes=True)
 
 
+#functie voor opdracht 1 voor summatieve opdracht 2c:
+def add_items_to_database(db: PostgreSQLdb):
+    """makes a connection to the PostgreSQL database.
+    calls the regenerate function, that drops the existing tables from the database, and creates empty new ones.
+    loops trough items in range(amount) from the MongoDB database and adds them to the PostgreSQL database.
+
+    parameters:
+        db: the postgres database to fill."""
+
+    db.regenerate_db("DDL1.txt")
+
+    products = MongodbDAO.getDocuments("products")
+    for i in range(20):
+        product_name = products[i]["name"]
+        product_id = products[i]["_id"]
+        product_price = products[i]["price"]["selling_price"]
+        db.query("INSERT INTO Products (product_id, product_name, selling_price) VALUES (%s, %s, %s);",
+                 (product_id, product_name, product_price), commit_changes=True)
+
+
+
+#functie voor opdracht 3 summatieve opdracht 2c:
 def max_abs_price(db: PostgreSQLdb) -> tuple[str]:
     """Retrieves all products in the database.
     Selects a random product from that database.
@@ -173,4 +208,12 @@ def max_abs_price(db: PostgreSQLdb) -> tuple[str]:
             biggest_dif_product, biggest_dif = product, dif
     return biggest_dif_product[0], random_product[0]
 
+
+#setup
+if host == "" or database == "" or user == "" or password == "" or port == "":
+    raise CredentialError
+
+db = PostgreSQLdb(host, database, user, password, port)
+
+#function calls for summatieve opdracht 2c:
 
