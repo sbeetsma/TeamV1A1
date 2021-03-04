@@ -1,7 +1,8 @@
 import psycopg2
 import random
-import MongodbDAO
-import pymongo
+if __name__ == "__main__": #for formatieve opdracht 2c
+    import MongodbDAO
+    import pymongo
 
 
 
@@ -159,8 +160,6 @@ class PostgreSQLdb:
             if query != "":
                 self.query(query + ";", commit_changes=True)
 
-#functies voor opdracht 2:
-def products_from_mongo_to_pg(db: Po)
 
 
 #functie voor opdracht 1 voor summatieve opdracht 2c:
