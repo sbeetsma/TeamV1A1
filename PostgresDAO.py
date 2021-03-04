@@ -146,6 +146,7 @@ class PostgreSQLdb:
         self._close_cursor()
         self._close_connection()
 
+
     def regenerate_db(self, ddl_source: str):
         """Empties all knows tables in the DB, and reconstructs everything according to the DDL(SQL) file provided.
 
@@ -157,6 +158,9 @@ class PostgreSQLdb:
         for query in query_list:
             if query != "":
                 self.query(query + ";", commit_changes=True)
+
+#functies voor opdracht 2:
+
 
 
 #functie voor opdracht 1 voor summatieve opdracht 2c:
