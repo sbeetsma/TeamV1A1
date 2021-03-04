@@ -160,7 +160,7 @@ class PostgreSQLdb:
                 self.query(query + ";", commit_changes=True)
 
 #functies voor opdracht 2:
-
+def products_from_mongo_to_pg(db: Po)
 
 
 #functie voor opdracht 1 voor summatieve opdracht 2c:
@@ -248,6 +248,9 @@ def max_abs_price(db: PostgreSQLdb) -> tuple[str]:
 
 db = PostgreSQLdb(host, database, user, password, port)
 
+
+
+"""
 #function calls for summatieve opdracht 2c:
 print("1:", end="\n\n")
 print(f"Adding items to PostGreSQL...")
@@ -263,3 +266,4 @@ print("3:", end="\n\n")
 map = max_abs_price(db)
 print(f"ID van gekozen willikeurig product: {map[1]}")
 print(f"ID van grootste absolute prijsverschil met dat product in PostGreSQL: {map[0]}")
+"""
