@@ -1,0 +1,22 @@
+MongoDB naar relationele DB conversie algoritme
+
+Functies:
+
+GetDocuments 			(mongoDB)
+DB.manyinsertqueries		(postgreSQL)
+retrieve from dictionary	
+
+Pseudo-code:
+
+1. drop Relational database
+2. make Relational database
+2. Get collection from MongoDB
+3. Iterate over collection:
+   for item in collectie:
+	for desired_atribute in item:
+		if desired_atribute == None:
+			desired_atribute = 'Null'
+		append result as tuple to list
+4. Make SQL query
+5. Execute SQL query insert into relational database
+6. Close connection
