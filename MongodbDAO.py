@@ -40,19 +40,3 @@ def retrieve_from_dict(dict: dict, key):
         return dict[key]
     except KeyError:
         return None
-
-
-
-
-
-c = getDocuments("sessions")
-
-
-for sesh in c:
-    i = retrieve_from_dict(sesh, '_id')
-    s = retrieve_from_dict(sesh, 'segment')
-    if (not isinstance(i, str)) and i != None:
-        aangepast = str(i)
-        print(aangepast)
-    if (not isinstance(s, str)) and s != None:
-        print(f"segment:{s}\n")

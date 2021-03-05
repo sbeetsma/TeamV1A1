@@ -61,13 +61,32 @@ def construct_insert_query(table_name: str, var_names: list[str]) -> str:
     return q
 
 
-def simple_mongo_to_sql(mongo_collectie_naam: str, #TODO: write docstring when computer is not dying
+def simple_mongo_to_sql(mongo_collection_name: str, #TODO: write docstring when computer is not dying
                         postgres_db: PostgresDAO.PostgreSQLdb,
                         postgres_table_name: str,
                         mongo_attribute_list: list[str or list[str]],
                         postgres_attribute_list: list[str],
                         reject_if_null_amount: int = 0):
-    collection = MongodbDAO.getDocuments(mongo_collectie_naam)
+    """A function to do a 'simple', one to one conversion of certain attributes of a MongoDB collection to a PostgreSQL table.
+
+    Args:
+        mongo_collection_name: The name of the MongoDB collection to retrieve products from.
+        postgres_db: the postgres DB object (from PostgresDAO.py) to insert into.
+        postgres_table_name: the postgres_table_name to insert into.
+        mongo_attribute_list:
+            a list that's allowed to contain either a string, or a list containing strings, for every attribute that has to be retrieved from mongoDB.
+            -the key as string if the attribute is directly stored under a single key in the item in MongoDB.
+                For instance: "name" if the name is stored under the key name.
+            -list containing keys as strings if the attribute is stored within an object (or several, stored within eachother) in MongoDB.
+                For instance: ["price", "selling_price"] if the selling price is stored under "selling_price" within an object stored under "price".
+        postgres_attribute_list:
+            the list of attribute names in PostGreSQL, in the same order as the corresponding attributes in mongo_attribute_list.
+            it is recommended to put any primary keys/not null constrained attributes first.
+        reject_if_null_amount:
+            an integer that represents the first n attributes in both of the attribute lists.
+            any entries that have the value null within these attributes will not be entered into PostGreSQL.
+        """
+    collection = MongodbDAO.getDocuments(mongo_collection_name)
     data_list = []
     for item in collection:
         value_list = []
@@ -76,6 +95,8 @@ def simple_mongo_to_sql(mongo_collectie_naam: str, #TODO: write docstring when c
                 value = retrieve_from_dict_depths_recursively(item, key)
             else:
                 value = retrieve_from_dict(item, key)
+            if not(isinstance(value, str) or isinstance(value, int)):
+                value = str(value)
             value_list.append(value)
         if not (None in value_list[0:reject_if_null_amount]):
             data_list.append(tuple(value_list))
