@@ -120,9 +120,12 @@ def fill_profiles_and_bu(pg: PostgresDAO.PostgreSQLdb):
         buids = retrieve_from_dict(profile, "buids")
         if buids != None:
             for buid in buids:
+                # not sure if this works, but should help with duplicates
+                if buid in buid_dataset:
+                    pass
                 buid_dataset.append((str(buid), id))
     profile_q = construct_insert_query("Profiles", ["profile_id"])
-    buid_q = construct_insert_query("Bu", ["bui_id", "profile_id"])
+    buid_q = construct_insert_query("Bu", ["bu_id", "profile_id"])
     pg.many_update_queries(profile_q, profile_dataset)
     pg.many_update_queries(buid_q, buid_dataset)
 
@@ -133,29 +136,52 @@ PostgresDAO.db.regenerate_db("DDL1.txt")
 print("DB CLEANED")
 
 
-
-
-
 fill_profiles_and_bu(PostgresDAO.db)
-""""
+"""
 #port products
+
+# a = mongo collection name
 a = "products"
+
+# b = postgres data base
 b = PostgresDAO.db
+
+# c = postgres table name
 c = "Products"
+
+# d = mongo attribute list
 d = ["_id", "name", ["price", "selling_price"]]
+
+# e = postgres attribute list
 e = ["product_id", "product_name", "selling_price"]
+
+# f = reject if null amount
 f = 2
+
 simple_mongo_to_sql(a, b, c, d, e, f)
 
 
 print("PRODUCTS PORTED")
 #port session
+
+# a = mongo collection name
 a = "sessions"
+
+# b = postgres data base
 b = PostgresDAO.db
+
+# c = postgres table name
 c = "Sessions"
+
+# d = mongo attribute list
 d = ["_id", "segment"]
+
+# e = postgres attribute list
 e = ["session_id", "segment"]
+
+# f = reject if null amount
 f = 1
+
 simple_mongo_to_sql(a, b, c, d, e, f)
 print("SESSIONS PORTED")
 """
