@@ -105,6 +105,12 @@ def simple_mongo_to_sql(mongo_collection_name: str, #TODO: write docstring when 
 
 
 def fill_profiles_and_bu(pg: PostgresDAO.PostgreSQLdb):
+    """Function to specifically fill the Profiles and Bu tables in PostGreSQL from the MongoDB collection profiles.
+
+    Not very modular, still needs improvement.
+
+    Args:
+        pg: the PostgresDAO db to fill."""
     collection = MongodbDAO.getDocuments("profiles")
     profile_dataset = []
     buid_dataset = []
