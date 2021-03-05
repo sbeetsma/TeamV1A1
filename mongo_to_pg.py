@@ -110,11 +110,11 @@ def fill_profiles_and_bu(pg: PostgresDAO.PostgreSQLdb):
     buid_dataset = []
     for profile in collection:
         id = str(retrieve_from_dict(profile, "_id"))
-        profile_dataset.append((id))
+        profile_dataset.append((id,))
         buids = retrieve_from_dict(profile, "buid")
         if buids != None:
             for buid in buids:
-                buid_dataset.append((buid, id))
+                buid_dataset.append((str(buid), id))
     profile_q = construct_insert_query("Profiles", ["profile_id"])
     buid_q = construct_insert_query("Bu", ["bui_id", "profile_id"])
     pg.many_update_queries(profile_q, profile_dataset)
