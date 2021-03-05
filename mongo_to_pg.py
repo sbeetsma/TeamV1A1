@@ -111,7 +111,7 @@ def fill_profiles_and_bu(pg: PostgresDAO.PostgreSQLdb):
     for profile in collection:
         id = str(retrieve_from_dict(profile, "_id"))
         profile_dataset.append((id,))
-        buids = retrieve_from_dict(profile, "buid")
+        buids = retrieve_from_dict(profile, "buids")
         if buids != None:
             for buid in buids:
                 buid_dataset.append((str(buid), id))
