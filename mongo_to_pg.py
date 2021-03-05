@@ -95,7 +95,7 @@ def simple_mongo_to_sql(mongo_collection_name: str, #TODO: write docstring when 
                 value = retrieve_from_dict_depths_recursively(item, key)
             else:
                 value = retrieve_from_dict(item, key)
-            if not(isinstance(value, str) or isinstance(value, int) or isinstance(value, float)):
+            if not(isinstance(value, str) or isinstance(value, int) or isinstance(value, float) or value is None):
                 value = str(value)
             value_list.append(value)
         if not (None in value_list[0:reject_if_null_amount]):
