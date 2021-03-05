@@ -23,7 +23,7 @@ CREATE TABLE Sessions
 (
 	session_id VARCHAR(128) NOT NULL,
 	segment VARCHAR(255),
-	bu_id INT,
+	bu_id VARCHAR(128),
 	PRIMARY KEY(session_id),
 	FOREIGN KEY(bu_id) REFERENCES Bu(bu_id)
 );
