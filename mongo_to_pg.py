@@ -95,7 +95,7 @@ def simple_mongo_to_sql(mongo_collection_name: str, #TODO: write docstring when 
                 value = retrieve_from_dict_depths_recursively(item, key)
             else:
                 value = retrieve_from_dict(item, key)
-            if not(isinstance(value, str) or isinstance(value, int) or isinstance(value, float) or value is None):
+            if not(isinstance(value, str) or isinstance(value, int) or isinstance(value, float) or value is None):#because pymongo keeps giving us wonky datatypes.
                 value = str(value)
             value_list.append(value)
         if not (None in value_list[0:reject_if_null_amount]):
@@ -103,10 +103,35 @@ def simple_mongo_to_sql(mongo_collection_name: str, #TODO: write docstring when 
     q = construct_insert_query(postgres_table_name, postgres_attribute_list)
     postgres_db.many_update_queries(q, data_list)
 
+
+def fill_profiles_and_bu(pg: PostgresDAO.PostgreSQLdb):
+    collection = MongodbDAO.getDocuments("profiles")
+    profile_dataset = []
+    buid_dataset = []
+    for profile in collection:
+        id = str(retrieve_from_dict(profile, "_id"))
+        profile_dataset.append((id))
+        buids = retrieve_from_dict(profile, "buid")
+        if buids != None:
+            for buid in buids:
+                buid_dataset.append((buid, id))
+    profile_q = construct_insert_query("Profiles", ["profile_id"])
+    buid_q = construct_insert_query("Bu", ["bui_id", "profile_id"])
+    pg.many_update_queries(profile_q, profile_dataset)
+    pg.many_update_queries(buid_q, buid_dataset)
+
+
+
 #refresh DB
 PostgresDAO.db.regenerate_db("DDL1.txt")
 print("DB CLEANED")
 
+
+
+
+
+fill_profiles_and_bu(PostgresDAO.db)
+""""
 #port products
 a = "products"
 b = PostgresDAO.db
@@ -127,3 +152,4 @@ e = ["session_id", "segment"]
 f = 1
 simple_mongo_to_sql(a, b, c, d, e, f)
 print("SESSIONS PORTED")
+"""
