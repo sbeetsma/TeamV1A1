@@ -9,9 +9,9 @@ if __name__ == "__main__": #for formatieve opdracht 2c
 
 #Vul hier je eigen PostgreSQL credentials in:
 host = "localhost"
-database = ""
+database = "rcmd"
 user = "postgres"
-password = ""
+password = "DataBAE117"
 port = "5432"
 #try not to push them to github
 
