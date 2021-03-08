@@ -66,7 +66,7 @@ def simple_mongo_to_sql(mongo_collection_name: str, #TODO: write docstring when 
                         postgres_table_name: str,
                         mongo_attribute_list: list[str or list[str]],
                         postgres_attribute_list: list[str],
-                        unpack_method_dict: dict = {},
+                        unpack_method_dict: dict = {"shouldnothappen": "shouldnothappen"},
                         reject_if_null_amount: int = 0):
     """A function to do a 'simple', one to one conversion of certain attributes of a MongoDB collection to a PostgreSQL table.
 
@@ -166,12 +166,11 @@ d = ["_id", "name", ["price", "selling_price"]]
 e = ["product_id", "product_name", "selling_price"]
 
 # f = unpack_method_dict
-f = {}
 
 # g = reject if null amount
 g = 2
 
-simple_mongo_to_sql(a, b, c, d, e, f, g)
+simple_mongo_to_sql(a, b, c, d, e, reject_if_null_amount=g)
 
 
 print("PRODUCTS PORTED")
