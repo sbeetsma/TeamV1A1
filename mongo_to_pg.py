@@ -192,13 +192,13 @@ b = PostgresDAO.db
 c = "Sessions"
 
 # d = mongo attribute list
-d = ["_id", "segment"]
+d = ["_id", "segment", "buid"]
 
 # e = postgres attribute list
-e = ["session_id", "segment"]
+e = ["session_id", "segment", "bu_id"]
 
 # f = unpack_method_dict
-f = {session_buid_unpacker}
+f = {2: session_buid_unpacker}
 
 # g = reject if null amount
 g = 1
