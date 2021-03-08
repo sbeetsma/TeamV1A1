@@ -66,6 +66,7 @@ def simple_mongo_to_sql(mongo_collection_name: str, #TODO: write docstring when 
                         postgres_table_name: str,
                         mongo_attribute_list: list[str or list[str]],
                         postgres_attribute_list: list[str],
+                        unpack_method_dict: dict = {},
                         reject_if_null_amount: int = 0):
     """A function to do a 'simple', one to one conversion of certain attributes of a MongoDB collection to a PostgreSQL table.
 
@@ -82,6 +83,11 @@ def simple_mongo_to_sql(mongo_collection_name: str, #TODO: write docstring when 
         postgres_attribute_list:
             the list of attribute names in PostGreSQL, in the same order as the corresponding attributes in mongo_attribute_list.
             it is recommended to put any primary keys/not null constrained attributes first.
+        unpack_method_dict:
+            a dictionairy with keys that represent indexes in postgres_attribute_list.
+            the values are methods to unpack certain MongoDB attributes in case they need further unpacking.
+            for instance, bu_id in the sessions collection is always stored in a length = 1 array.
+            a simple function to help unpack this should be passed with unpack_method_dict.
         reject_if_null_amount:
             an integer that represents the first n attributes in both of the attribute lists.
             any entries that have the value null within these attributes will not be entered into PostGreSQL.
@@ -90,11 +96,15 @@ def simple_mongo_to_sql(mongo_collection_name: str, #TODO: write docstring when 
     data_list = []
     for item in collection:
         value_list = []
-        for key in mongo_attribute_list:
+        for i in range(0, len(mongo_attribute_list)):
+            key = mongo_attribute_list[i]
+            unpack_method = retrieve_from_dict(dict, i)
             if type(key) == list:
                 value = retrieve_from_dict_depths_recursively(item, key)
             else:
                 value = retrieve_from_dict(item, key)
+            if unpack_method != None:
+                value = unpack_method(value)
             if not(isinstance(value, str) or isinstance(value, int) or isinstance(value, float) or value is None):#because pymongo keeps giving us wonky datatypes.
                 value = str(value)
             value_list.append(value)
@@ -137,7 +147,7 @@ print("DB CLEANED")
 
 
 fill_profiles_and_bu(PostgresDAO.db)
-"""
+
 #port products
 
 # a = mongo collection name
@@ -155,14 +165,22 @@ d = ["_id", "name", ["price", "selling_price"]]
 # e = postgres attribute list
 e = ["product_id", "product_name", "selling_price"]
 
-# f = reject if null amount
-f = 2
+# f = unpack_method_dict
+f = {}
 
-simple_mongo_to_sql(a, b, c, d, e, f)
+# g = reject if null amount
+g = 2
+
+simple_mongo_to_sql(a, b, c, d, e, f, g)
 
 
 print("PRODUCTS PORTED")
 #port session
+
+def session_buid_unpacker(array):
+    """Returns first object in a list.
+    Will write nicer function later"""
+    return array[0]
 
 # a = mongo collection name
 a = "sessions"
@@ -179,9 +197,11 @@ d = ["_id", "segment"]
 # e = postgres attribute list
 e = ["session_id", "segment"]
 
-# f = reject if null amount
-f = 1
+# f = unpack_method_dict
+f = {session_buid_unpacker}
+
+# g = reject if null amount
+g = 1
 
 simple_mongo_to_sql(a, b, c, d, e, f)
 print("SESSIONS PORTED")
-"""
