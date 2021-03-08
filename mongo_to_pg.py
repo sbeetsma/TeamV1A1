@@ -124,16 +124,19 @@ def fill_profiles_and_bu(pg: PostgresDAO.PostgreSQLdb):
     collection = MongodbDAO.getDocuments("profiles")
     profile_dataset = []
     buid_dataset = []
+
+    known_buid = set()
+
     for profile in collection:
         id = str(retrieve_from_dict(profile, "_id"))
         profile_dataset.append((id,))
         buids = retrieve_from_dict(profile, "buids")
         if buids != None:
             for buid in buids:
-                # not sure if this works, but should help with duplicates
-                if buid in buid_dataset:
-                    pass
-                buid_dataset.append((str(buid), id))
+                buid = str(buid)
+                if not (buid in known_buid):
+                    known_buid.add(buid)
+                    buid_dataset.append((buid, id))
     profile_q = construct_insert_query("Profiles", ["profile_id"])
     buid_q = construct_insert_query("Bu", ["bu_id", "profile_id"])
     pg.many_update_queries(profile_q, profile_dataset)
